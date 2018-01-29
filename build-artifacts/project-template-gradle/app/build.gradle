@@ -694,7 +694,9 @@ task validateAppIdMatch {
             if(project.nsApplicationIdentifier != android.defaultConfig.applicationId) {
                 def errorMessage = "${lineSeparator}WARNING: The Application identifier is different from the one inside \"package.json\" file.$lineSeparator" +
                         "NativeScript CLI might not work properly.$lineSeparator" +
-                        "Remove applicationId from app.gradle and update the \"nativescript.id\" in package.json as follows {\"ios\": \"\" , \"android\": \"\"}.";
+                        "Remove applicationId from app.gradle and update the \"nativescript.id\" in package.json.$lineSeparator" +
+						"Actual: ${android.defaultConfig.applicationId}$lineSeparator" +
+						"Expected(from \"package.json\"): ${project.nsApplicationIdentifier}$lineSeparator"
                 logger.error(errorMessage)
             }
         }
