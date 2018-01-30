@@ -58,10 +58,9 @@ def computeBuildToolsVersion = { -> project.hasProperty("buildToolsVersion") ? b
 
 def getAppIdentifier = { packageJsonMap ->
 	def appIdentifier = "";
-	if(packageJsonMap){
+	if (packageJsonMap) {
 		appIdentifier = packageJsonMap.nativescript.id;
-		if (!(appIdentifier instanceof String))
-		{
+		if (!(appIdentifier instanceof String)) {
 			appIdentifier = appIdentifier.android;
 		}
 	}
@@ -70,28 +69,26 @@ def getAppIdentifier = { packageJsonMap ->
 }
 
 def getProjectName = { ->
-		if(project.hasProperty("nsApplicationIdentifier")){
-			def parts = project.nsApplicationIdentifier.split(/[.]/);
+	if (project.hasProperty("nsApplicationIdentifier")) {
+		def parts = project.nsApplicationIdentifier.split(/[.]/);
 
-			return parts.last();
-		}
+		return parts.last();
+	}
 
-		return rootProject.name;
+	return rootProject.name;
 }
 
 def setAppIdentifier = { ->
 	println "\t + setting applicationId";
 	File packageJsonFile = new File("$rootDir/../../package.json");
 
-	if(packageJsonFile.exists())
-	{
+	if (packageJsonFile.exists()) {
 		def content = packageJsonFile.getText("UTF-8");
 		def jsonSlurper = new JsonSlurper();
 		def packageJsonMap = jsonSlurper.parseText(content);
 		def appIdentifier = getAppIdentifier(packageJsonMap);
 
-		if(appIdentifier)
-		{
+		if (appIdentifier) {
 			project.ext.nsApplicationIdentifier = appIdentifier;
 			android.defaultConfig.applicationId = appIdentifier;
 		}
@@ -687,20 +684,21 @@ task copyTypings {
 copyTypings.onlyIf { generateTypescriptDefinitions.didWork }
 
 task validateAppIdMatch {
-    doLast {
-        def lineSeparator = System.getProperty("line.separator")
+	doLast {
+		def lineSeparator = System.getProperty("line.separator")
 
-        if (project.hasProperty("nsApplicationIdentifier") && !project.hasProperty("release")) {
-            if(project.nsApplicationIdentifier != android.defaultConfig.applicationId) {
-                def errorMessage = "${lineSeparator}WARNING: The Application identifier is different from the one inside \"package.json\" file.$lineSeparator" +
-                        "NativeScript CLI might not work properly.$lineSeparator" +
-                        "Remove applicationId from app.gradle and update the \"nativescript.id\" in package.json.$lineSeparator" +
-						"Actual: ${android.defaultConfig.applicationId}$lineSeparator" +
-						"Expected(from \"package.json\"): ${project.nsApplicationIdentifier}$lineSeparator"
-                logger.error(errorMessage)
-            }
-        }
-    }
+		if (project.hasProperty("nsApplicationIdentifier") && !project.hasProperty("release")) {
+			if(project.nsApplicationIdentifier != android.defaultConfig.applicationId) {
+				def errorMessage = "${lineSeparator}WARNING: The Application identifier is different from the one inside \"package.json\" file.$lineSeparator" +
+					"NativeScript CLI might not work properly.$lineSeparator" +
+					"Remove applicationId from app.gradle and update the \"nativescript.id\" in package.json.$lineSeparator" +
+					"Actual: ${android.defaultConfig.applicationId}$lineSeparator" +
+					"Expected(from \"package.json\"): ${project.nsApplicationIdentifier}$lineSeparator";
+
+				logger.error(errorMessage)
+			}
+		}
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
